@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kube-news-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kube-news
+  template:
+    metadata:
+      labels:
+        app: kube-news
+    spec:
+      containers:
+      - name: kuber-news
+        image: rvaranda/kube-news
+        ports:
+        - containerPort: 80
+        env:
+          - name: DB_DATABASE
+            value: kube_db
+          - name: DB_USERNAME
+            value: user
+          - name: DB_PASSWORD
+            value: root
+          - name: DB_HOST
+            value: database-service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kube-news-service
+spec:
+  selector:
+    app: kube-news
+  ports:
+  - port: 8080
+    protocol: TCP
+    nodePort: 30000
+  type: NodePort
+

@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: database-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgre
+  template:
+    metadata:
+      labels:
+        app: postgre
+    spec:
+      containers:
+      - name: postgre
+        image: postgres
+        ports:
+        - containerPort: 5432
+        env:
+          - name: POSTGRES_DB
+            value: kube_db
+          - name: POSTGRES_USER
+            value: user
+          - name: POSTGRES_PASSWORD
+            value: root
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: database-service
+spec:
+  selector:
+    app: postgre
+  ports:
+  - protocol: TCP
+    port: 5432
+  type: ClusterIP
